@@ -1,11 +1,18 @@
 
-const { rawListeners } = require("../../app");
+
 const ApiError = require("../../utils/ApiError")
-const ApiResponse = require("../../utils/ApiResponse")
+const ApiResponse = require("../../utils/ApiResponse");
+const Badrequest = require("../../utils/Badrequest")
 
 //Register controller
 const registerController = async(req, res, next)=>{
       try {
+        const{name, email, password, phone} = req.body;
+
+          if(!name){
+             throw next (new (Badrequest('All fields required')))
+          }
+
          const user = {
                message: "user register successfully",
                success: true
