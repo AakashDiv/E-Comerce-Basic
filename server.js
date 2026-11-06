@@ -5,8 +5,6 @@ const { connectDB, disconnectDB } = require("./config/db/connection");
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI;
 
-console.log(PORT)
-
 const server = async (URI) => {
   try {
     if (!URI) {
