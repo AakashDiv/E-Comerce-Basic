@@ -22,6 +22,7 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false
     },
     isEmailVerified: {
       type: Boolean,
@@ -52,17 +53,7 @@ userSchema.methods.comparePassword = async function(userPassword){
       return await bcrypt.compare(userPassword, this.password);
 }
 
-userSchema.methods.createJWT =  function(){
-           try {
-               return JWT.sign(
-                {userId: this._id, role: this.role},
-                process.env.JWT_SECRET,
-                {expiresIn: process.env.JWT_EXPIRE} 
-              )
-           } catch (error) {
-               throw new Error(error.message)
-           }
-}
+
 
 const users = mongoose.model("Users", userSchema);
 module.exports = users;
