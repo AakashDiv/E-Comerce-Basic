@@ -12,7 +12,8 @@ app.use(cookieParser(process.env.JWT_SECRET))
 const ApiError = require("./utils/ApiError");
 const ApiResponse = require("./utils/ApiResponse");
 
-const authRoute = require("./routes/auth.route")
+const authRoute = require("./routes/auth.route");
+const productRoute = require("./routes/product.route")
 
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
@@ -45,7 +46,8 @@ app.get("/api/v1/error-test", (req, res) => {
 });
 
 
-app.use("/api/v1/auth", authRoute)
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/product", productRoute)
 
 
 app.use(notFound);

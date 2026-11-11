@@ -9,7 +9,7 @@ const errorHandler = async (error, req, res, next) => {
       success: false,
     });
   }
-
+ console.log("something went wrong", error)
   return res.status(500).json({
     message: "something went wrong",
     status: 500,
