@@ -43,10 +43,11 @@ const productSchema = mongoose.Schema({
 
           },
 
-          images:{
-            type: String,
-            required: true,
-          },
+          images: [
+               {
+                    type: String,
+               }
+          ],
 
         SKU: {
             type:String,
@@ -62,20 +63,13 @@ const productSchema = mongoose.Schema({
             min: 0,
         },
 
-        reviews: [
-            {
-            type:mongoose.Types.ObjectId,
-            ref: "Review",
-        }
-        ],
-
           createdBy: {
                type: mongoose.Types.ObjectId,
                ref: "Users",
                required: true
           },
           
-})
+}, {timestamps: true})
 
 productSchema.pre("validate", function(){
       if(this.discountPrice !== null && this.discountPrice !== undefined && this.discountPrice >= this.price ){

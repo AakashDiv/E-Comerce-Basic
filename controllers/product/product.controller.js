@@ -25,10 +25,10 @@ const getAllProducts = async(req, res, next)=>{
 }
 
 const getSingleProducts = async(req, res, next)=>{
-          const {id: productId} = req.params.id
+          const {id: productId} = req.params
             try {
                  
-                const product = await Product.findById({_id: productId})
+                const product = await Product.findById({productId})
 
                 if(!product){
                     return next(new NotFound(`Product not found on this id ${productId}`) )
@@ -48,7 +48,7 @@ const getSingleProducts = async(req, res, next)=>{
 }
 
 const createProducts = async(req, res, next)=>{
-        const {title, description, price, discountPrice, category, brand, isActive, isFeature, images, SKU, stock, createdBy} = req.body;
+        const {title, description, price, discountPrice, category, brand, isActive, isFeature, images, reviews, SKU, stock, createdBy} = req.body;
 
           const userId = req.user.userId;
 
@@ -88,14 +88,14 @@ const createProducts = async(req, res, next)=>{
 }
 
 const updateProducts = async(req, res, next)=>{
-         const {id: productId} = req.params.id;
+         const {id: productId} = req.params;
          const {title, description, price, discountPrice, category, brand, isActive, isFeature, images, SKU, stock, createdBy} = req.body;
 
           const userId = req.user.userId;
         
             try {
               
-                const product = await Product.findById({_id: productId});
+                const product = await Product.findById({productId});
                 if(!product){
                      return next(new NotFound(`Product not found on this id ${productId}`) )
                 }
