@@ -17,7 +17,10 @@ const authenticate = async(req, res, next)=>{
             return next(new Unauthorized('token does not verify'))
          }
 
-         req.user = decode.userId;
+         req.user = {
+             userId: decode.userId,
+             role: decode.role,
+         }
          
          return next()
 

@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema(
       required: true,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
     },
     password: {
@@ -38,15 +38,12 @@ const userSchema = mongoose.Schema(
 );
 
 
-userSchema.pre('save', async function(next){
-  if(!this.isModified('password')) return next();
-       try {
-            const salt = await bcrypt.genSalt(10);
+userSchema.pre('save', async function(){
+  if(!this.isModified('password')) return ;
+        const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-         next()
-       } catch (error) {
-        next(error)
-       }
+   
+       
 })
 
 userSchema.methods.comparePassword = async function(userPassword){

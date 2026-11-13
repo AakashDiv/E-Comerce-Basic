@@ -14,7 +14,7 @@ const registerController = async(req, res, next)=>{
       try {
         const{name, email, password, phone, role} = req.body;
 
-          if(!name  || !email || !password || !phone || !role){
+          if(!name  || !email || !password || !phone ){
               return next(new Badrequest('All fields required'))
           }
 
