@@ -2,6 +2,7 @@
 
 const { default: mongoose } = require("mongoose");
 const Category = require("../../models/category/category.model");
+const Product = require("../../models/product/product.model")
 const ApiResponse = require("../../utils/ApiResponse");
 const BadRequest = require("../../utils/Badrequest");
 const NotFound = require("../../utils/NotFound");
@@ -10,12 +11,26 @@ const createCategoryController = async(req, res, next)=>{
     const{name, description, coverImage} = req.body;
 
       try {
-        if(!name.trim() || !description.trim() || !coverImage.trim()){
+        if(typeof name !== 'string' || !name.trim() 
+           || description !== 'string' || description.trim()
+           || coverImage !== 'string'  || coverImage.trim()
+        
+        ){
              return next(new BadRequest("all fields are required"))
         }
 
+        const normalizedName = name.trim().toLowerCase()
+
+        //check duplicate category
+        const isCategoryExist = await Category.findOne({name: normalizedName});
+
+        if(isCategoryExist){
+             return next(new BadRequest(`category ${name} already present`))
+        }
+
+
            const category = await Category.create({
-               name: name,
+               name: normalizedName,
                description: description,
                coverImage: coverImage,
            })    
@@ -43,8 +58,8 @@ const getAllCategoriesController = async(req, res, next)=>{
                  success: true
            }
 
-           const response = new ApiResponse(201, data, "category created successfully")
-           res.status(201).json(response)
+           const response = new ApiResponse(200, data, "category created successfully")
+           res.status(200).json(response)
 
     } catch (error) {
         return next(error)
@@ -69,8 +84,8 @@ const getSingleCategoryController = async(req, res, next)=>{
                  success: true
            }
 
-           const response = new ApiResponse(201, data, "single category get successfully")
-           res.status(201).json(response)
+           const response = new ApiResponse(200, data, "single category get successfully")
+           res.status(200).json(response)
 
     } catch (error) {
         return next(error)
@@ -89,7 +104,18 @@ const updateCategoryController = async(req, res, next)=>{
           const updateData = {};
 
           if(name !== undefined){
-              updateData.name = name
+              if(typeof name !== 'string' || !name.trim()){
+                 return next (new BadRequest("Category name cannot be empty"))
+              }
+              const normalizeName = name.trim().toLowerCase();
+
+        const isCategoryExist = await Category.findOne({name: normalizeName, _id: {$ne: categoryId}});
+
+        if(isCategoryExist){
+             return next(new BadRequest(`category ${name} already present`))
+        }
+
+              updateData.name = normalizeName
           }
 
           if(description !== undefined){
@@ -98,6 +124,10 @@ const updateCategoryController = async(req, res, next)=>{
 
             if(coverImage !== undefined){
               updateData.coverImage = coverImage
+          }
+
+          if(Object.keys(updateData).length == 0){
+                return next(new BadRequest("Please provide fields to update"));
           }
 
 
@@ -132,6 +162,13 @@ const deleteCategoryController = async(req, res, next)=>{
                return next(new BadRequest(`No Cateogry Found ${categoryId}`))
         };
 
+  //check before delete category has product
+  const isCategoryUsed = await Product.exists({category: categoryId})
+
+  if(isCategoryUsed){
+      return next(new BadRequest(`Cannot delete category because products are linked to it `))
+  }
+
         const deleteCategory = await Category.findByIdAndDelete(categoryId)
 
         if(!deleteCategory){
@@ -143,8 +180,8 @@ const deleteCategoryController = async(req, res, next)=>{
                  success: true
            }
 
-           const response = new ApiResponse(201, data, "category delete successfully")
-         return  res.status(201).json(response)
+           const response = new ApiResponse(200, data, "category delete successfully")
+         return  res.status(200).json(response)
     } catch (error) {
         return next(error)
     }
